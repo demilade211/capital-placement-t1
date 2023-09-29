@@ -3,14 +3,14 @@ import styled from "styled-components";
 import move from "./images/move.svg"
 import addChoice from "./images/addChoice.svg"
 
-const ChoiceInput: React.FC<any> = ({  place, type, onChange, name, value }) => {
+const ChoiceInput: React.FC<any> = ({  place, type, onChange, name, value,adder,addChoices }) => {
     return (
         <InputLabelCon> 
             <img src={move} alt="img" />
             <InputCon>
                 <input type={type} placeholder={place} onChange={onChange} name={name} value={value} />
             </InputCon>
-            <img src={addChoice} alt="img" />
+            {adder&&<img src={addChoice} alt="img" onClick={addChoices} />}
         </InputLabelCon>
     )
 }

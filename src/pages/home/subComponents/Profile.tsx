@@ -1,15 +1,92 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Switch } from 'antd';
 import InfoContainer from '../../../components/InfoContainer'
 import styled from 'styled-components';
 import add from "../images/add.svg"
+import edit from "../images/edit.svg"
+import CreateQuestion from './CreateQuestion';
 
-const Profile = () => {
+interface Question {
+  questionType: string;
+  question: string;
+  disqualifyCandidate?: boolean;
+  options?: string[];
+  enableOthers?: boolean;
+  maxChoiceAllowed?: number;
+  additionalInformation?: string;
+  maxDurationOfVideo?: number;
+  in?: string;
+}
+
+const Profile: React.FC<any> = ({ setState, info }) => {
+
+  const [showQuestion, setShowQuestion] = useState(false);
+  const [questionType, setQuestionType] = useState(null);
+  const [singleQuestion, setSingleQuestion] = useState<Question>({
+    questionType: "",
+    question: '',
+    disqualifyCandidate: false, // Default value for boolean property
+    options: [], // Default value for string[] property
+    enableOthers: false, // Default value for boolean property
+    maxChoiceAllowed: 0, // Default value for number property
+    additionalInformation: '', // Default value for string property
+    maxDurationOfVideo: 0, // Default value for number property
+    in: '', // Default value for string property
+  });
+
+  const [questionList, setQuestionList] = useState<Question[]>([]);
+
+  const addQuestion = () => {
+    if (singleQuestion.questionType && singleQuestion.question) {
+      setQuestionList((prev: any) => ([...prev, singleQuestion]))
+      setShowQuestion(false)
+      setSingleQuestion(
+        {
+          questionType: "",
+          question: '',
+          disqualifyCandidate: false,
+          options: [],
+          enableOthers: false,
+          maxChoiceAllowed: 0,
+          additionalInformation: '',
+          maxDurationOfVideo: 0,
+          in: '',
+        }
+      )
+    }
+  };
 
   const onChange = (e: CheckboxChangeEvent) => {
     console.log(`checked = ${e.target.checked}`);
+    const { name, checked } = e.target as { name: string; checked: boolean };
+    console.log(name);
+
+    setState((prev: any) => ({
+      ...prev,
+      personalInformation: {
+        ...prev.personalInformation,
+        [name]: {
+          ...prev.personalInformation[name],
+          mandatory: checked
+        }
+      }
+    }))
+  };
+
+  const switchChange = (checked: boolean, name: string) => {
+
+    setState((prev: any) => ({
+      ...prev,
+      personalInformation: {
+        ...prev.personalInformation,
+        [name]: {
+          ...prev.personalInformation[name],
+          show: checked
+        }
+      }
+    }))
   };
 
   return (
@@ -17,20 +94,30 @@ const Profile = () => {
       <ProCon>
         <Row>
           <h2 className='label'>Education</h2>
-          <Checkbox onChange={onChange}><span className='internal'>Mandatory</span></Checkbox>
-          <span className='hide'><Switch size="small" style={{ marginRight: "10px" }} />Hide</span>
+          <Checkbox name='education' value={info.education.mandatory} onChange={onChange}><span className='internal'>Mandatory</span></Checkbox>
+          <span className='hide'><Switch checked={info.education.show} onChange={(checked) => switchChange(checked, "education")} size="small" style={{ marginRight: "10px" }} />Hide</span>
         </Row>
         <Row>
           <h2 className='label'>Experience </h2>
-          <Checkbox onChange={onChange}><span className='internal'>Mandatory</span></Checkbox>
-          <span className='hide'><Switch size="small" style={{ marginRight: "10px" }} />Hide</span>
+          <Checkbox name='experience' value={info.experience.mandatory} onChange={onChange}><span className='internal'>Mandatory</span></Checkbox>
+          <span className='hide'><Switch checked={info.experience.show} onChange={(checked) => switchChange(checked, "experience")} size="small" style={{ marginRight: "10px" }} />Hide</span>
         </Row>
         <Row>
           <h2 className='label'>Resume</h2>
-          <Checkbox onChange={onChange}><span className='internal'>Mandatory</span></Checkbox>
-          <span className='hide'><Switch size="small" style={{ marginRight: "10px" }} />Hide</span>
+          <Checkbox name='resume' value={info.resume.mandatory} onChange={onChange}><span className='internal'>Mandatory</span></Checkbox>
+          <span className='hide'><Switch checked={info.resume.show} onChange={(checked) => switchChange(checked, "resume")} size="small" style={{ marginRight: "10px" }} />Hide</span>
         </Row>
-        <AddCon>
+        {questionList?.map((val) => (
+          <EditRow>
+            <p className='first-row'>{val.questionType}</p>
+            <div className='second-row'>
+              <h2 className='label'>{val.question}</h2>
+              <img src={edit} alt="img" />
+            </div>
+          </EditRow>
+        ))}
+        {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} />}
+        <AddCon onClick={() => setShowQuestion(true)}>
           <img src={add} alt="img" />
           <p className='add-text'>Add a question</p>
         </AddCon>
@@ -109,6 +196,36 @@ const AddCon = styled.div`
     line-height: 24px; /* 160% */
     letter-spacing: -0.09px;
   } 
+`;
+
+const EditRow = styled.div`  
+  width: 100%;   
+  border-bottom: 1px solid #C4C4C4;
+  margin:20px 0; 
+  padding-bottom:20px; 
+  .first-row{
+    color: #979797;
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 159.5%; /* 22.33px */
+    margin-bottom:10px;
+  }
+  .second-row{
+    display: flex; 
+    justify-content:space-between;
+    align-items: flex-start;
+    .label{
+      width: 80%;
+      color: #000;
+      font-family: Poppins;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 114%; /* 22.8px */ 
+    }
+  }
 `;
 
 export default Profile

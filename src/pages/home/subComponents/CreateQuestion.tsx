@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import cancel from "../images/cancel.svg"
 import ChoiceInput from '../../../components/ChoiceInput';
 import { Checkbox } from 'antd';
@@ -8,54 +8,91 @@ import Input from '../../../components/Input';
 import styled from 'styled-components';
 import { qTypes, tTypes } from "../../../utils/data"
 
-const CreateQuestion: React.FC<any> = ({ type, setShowQuestion, setQuestionType,setSingleQuestion,addQuestion }) => {
+interface Choice {
+  id: string;
+  choice: string;
+}
+
+let id = 0;
+
+const CreateQuestion: React.FC<any> = ({ type, setShowQuestion, setQuestionType, setSingleQuestion, addQuestion,choices }) => {
+  const [option, setOption] = useState("");
 
   const onChange = (e: CheckboxChangeEvent) => {
     console.log(`checked = name:${e.target.name} ${e.target.checked}`);
     const { name, checked } = e.target as { name: string; checked: boolean };// takes the name and vale of event currently changing
-    setSingleQuestion((prev:any )=> ({ ...prev, [name]: checked }))
+    setSingleQuestion((prev: any) => ({ ...prev, [name]: checked }))
   };
 
   const onSelectChange = (option: any) => {
     setQuestionType(Number(option.value))
-    setSingleQuestion((prev:any )=> ({ ...prev, questionType: option.label }))
+    setSingleQuestion((prev: any) => ({ ...prev, type: option.label }))
 
   };
-  const handleChange = (e:any) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target// takes the name and vale of event currently changing
-    setSingleQuestion((prev:any )=> ({ ...prev, [name]: value }))
+    setSingleQuestion((prev: any) => ({ ...prev, [name]: value }))
   }
+  
   const onTimeChange = (option: any) => {
     //setQuestionType(Number(option.value))
 
   };
 
+  const optionChange = (e: any) => {
+    const { name, value } = e.target// takes the name and vale of event currently changing
+    setOption(value)
+  };
+
+  const updateChoice = (id: number, updatedChoice: string) => {
+    const updatedChoices = choices.map((choice:any,index:number) =>
+      index === id ? updatedChoice : choice
+    );
+    setSingleQuestion((prev: any) => ({...prev, choices:updatedChoices}));
+
+  };
+
+  const addChoice = () => {
+    if (option) {
+      setSingleQuestion((prev: any) => ({...prev, choices:[...prev.choices,option]}))
+      setOption("")
+    }
+
+  };
+
+  console.log(choices);
+
+
   return (
     <CreateCon>
       <SelectInput label="Type" options={qTypes} setQuestionType={setQuestionType} onChange={onSelectChange} />
-      <Input label="Question" type="text" place="Type here" name="question" onChange={handleChange}/>
+      <Input label="Question" type="text" place="Type here" name="question" onChange={handleChange} />
       {type === 9 &&
         <>
-          <Input place="Additional Information" type="text"  name="additionalInformation"/>
+          <Input place="Additional Information" type="text" name="additionalInformation" />
           <div className='grid-con'>
-            <Input place="Max duration of video" type="number"  name="maxDurationOfVideo"/>
+            <Input place="Max duration of video" type="number" name="maxDuration" />
             <SelectInput place="in (sec/min)" options={tTypes} setQuestionType={setQuestionType} onChange={onTimeChange} />
           </div>
         </>
       }
-      {type === 3 && <Checkbox name='disqualifyCandidate' style={{ marginBottom: "40px" }} onChange={onChange}><span className='other'>Disqualify candidate if the answer is no</span></Checkbox>}
+      {type === 3 && <Checkbox name='disqualify' style={{ marginBottom: "40px" }} onChange={onChange}><span className='other'>Disqualify candidate if the answer is no</span></Checkbox>}
       {((type === 4) || (type === 5)) &&
         <>
           <ul className='choice-con'>
             <label className='label'></label>
+            {choices.map((val:string,index:number) => <li key={index}>
+              <ChoiceInput place="Type here" type="text" value={val} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateChoice(index, e.target.value)}/>
+            </li>
+            )}
             <li>
-              <ChoiceInput place="Type here" type="text"/>
+              <ChoiceInput place="Type here" value={option} type="text" adder={true} onChange={optionChange} addChoices={addChoice} />
             </li>
           </ul>
-          <Checkbox name='enableOthers' style={{ marginBottom: "40px" }} onChange={onChange}><span className='other'>Enable “Other” option </span></Checkbox>
+          <Checkbox name='other' style={{ marginBottom: "40px" }} onChange={onChange}><span className='other'>Enable “Other” option </span></Checkbox>
         </>
       }
-      {type === 5 && <Input place="Enter number of choice allowed here" label="Max choice allowed" type="number"  name="maxChoiceAllowed"/>}
+      {type === 5 && <Input place="Enter number of choice allowed here" label="Max choice allowed" type="number" name="maxChoiceAllowed" />}
       <div className='cancel-save'>
         <span onClick={() => {
           setShowQuestion(false)
@@ -64,10 +101,7 @@ const CreateQuestion: React.FC<any> = ({ type, setShowQuestion, setQuestionType,
         >
           <img src={cancel} alt="img" />Delete question
         </span>
-        <button onClick={()=>{
-          addQuestion()
-          setShowQuestion(false)
-        }}>Save</button>
+        <button onClick={addQuestion}>Save</button>
       </div>
     </CreateCon>
   )

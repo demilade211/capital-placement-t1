@@ -12,70 +12,71 @@ import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import CreateQuestion from './CreateQuestion';
 
 interface Question {
-  questionType: string;
+  type: string;
   question: string;
-  disqualifyCandidate?: boolean;
-  options?: string[];
-  enableOthers?: boolean;
-  maxChoiceAllowed?: number;
+  disqualify?: boolean;
+  choices?: string[];
+  other?: boolean;
+  maxChoice?: number;
   additionalInformation?: string;
-  maxDurationOfVideo?: number;
+  maxDuration?: number;
   in?: string;
 }
 
-const Additional = () => {
+const Additional: React.FC<any> = ({ setState, info,handleRegister }) => {
 
   const [showQuestion, setShowQuestion] = useState(false);
   const [questionType, setQuestionType] = useState(null);
   const [singleQuestion, setSingleQuestion] = useState<Question>({
-    questionType: "",
+    type: "",
     question: '',
-    disqualifyCandidate: false, // Default value for boolean property
-    options: [], // Default value for string[] property
-    enableOthers: false, // Default value for boolean property
-    maxChoiceAllowed: 0, // Default value for number property
+    disqualify: false, // Default value for boolean property
+    choices: [], // Default value for string[] property
+    other: false, // Default value for boolean property
+    maxChoice: 0, // Default value for number property
     additionalInformation: '', // Default value for string property
-    maxDurationOfVideo: 0, // Default value for number property
+    maxDuration: 0, // Default value for number property
     in: '', // Default value for string property
   });
 
   const [questionList, setQuestionList] = useState<Question[]>([]);
 
-  const addQuestion = () => {
-    if (singleQuestion.questionType && singleQuestion.question) {
-      setQuestionList((prev: any) => ([...prev, singleQuestion]))
+  const addQuestion = async() => {
+    if (singleQuestion.type && singleQuestion.question) {
+      setState((prev: any) => ({...prev, customisedQuestions:[...prev.customisedQuestions,singleQuestion]}))
+      setShowQuestion(false)
+      await handleRegister()
       setSingleQuestion(
         {
-          questionType: "",
+          type: "",
           question: '',
-          disqualifyCandidate: false, 
-          options: [], 
-          enableOthers: false, 
-          maxChoiceAllowed: 0, 
-          additionalInformation: '', 
-          maxDurationOfVideo: 0, 
-          in: '', 
+          disqualify: false,
+          choices: [],
+          other: false,
+          maxChoice: 0,
+          additionalInformation: '',
+          maxDuration: 0,
+          in: '',
         }
       )
     }
   };
-
-  console.log(singleQuestion);
-
+ 
+  
 
   return (
     <InfoContainer title="Additional questions">
       <AdditionalCon>
-        {questionList?.map((val) => (
+        {info?.map((val:any) => (
           <EditRow>
-            <p className='first-row'>{val.questionType}</p>
+            <p className='first-row'>{val.type}</p>
             <div className='second-row'>
               <h2 className='label'>{val.question}</h2>
               <img src={edit} alt="img" />
             </div>
           </EditRow>
         ))}
-        {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} />}
+        {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} choices={singleQuestion.choices}/>}
         <AddCon onClick={() => setShowQuestion(true)}>
           <img src={add} alt="img" />
           <p className='add-text'>Add a question</p>
