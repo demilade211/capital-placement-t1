@@ -20,7 +20,7 @@ interface Question {
   in?: string;
 }
 
-const Personal: React.FC<any> = ({ setState, info,handleRegister }) => {
+const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
 
   const [showQuestion, setShowQuestion] = useState(false);
   const [questionType, setQuestionType] = useState(null);
@@ -28,7 +28,7 @@ const Personal: React.FC<any> = ({ setState, info,handleRegister }) => {
     type: "",
     question: '',
     disqualify: false, // Default value for boolean property
-    choices: [], // Default value for string[] property
+    choices: [""], // Default value for string[] property
     other: false, // Default value for boolean property
     maxChoice: 0, // Default value for number property
     additionalInformation: '', // Default value for string property
@@ -38,9 +38,15 @@ const Personal: React.FC<any> = ({ setState, info,handleRegister }) => {
 
   const [questionList, setQuestionList] = useState<Question[]>([]);
 
-  const addQuestion = async() => {
+  const addQuestion = async () => {
     if (singleQuestion.type && singleQuestion.question) {
-      setQuestionList((prev: any) => ([...prev, singleQuestion]))
+      setState((prev: any) => ({
+        ...prev,
+        personalInformation: {
+          ...prev.personalInformation,
+          personalQuestions: [...prev.personalInformation.personalQuestions, singleQuestion]
+        }
+      }))
       setShowQuestion(false)
       await handleRegister()
       setSingleQuestion(
@@ -48,7 +54,7 @@ const Personal: React.FC<any> = ({ setState, info,handleRegister }) => {
           type: "",
           question: '',
           disqualify: false,
-          choices: [],
+          choices: [""],
           other: false,
           maxChoice: 0,
           additionalInformation: '',
@@ -140,7 +146,7 @@ const Personal: React.FC<any> = ({ setState, info,handleRegister }) => {
           <Checkbox name='gender' value={info.gender.internalUse} onChange={onChange}><span className='internal'>Internal</span></Checkbox>
           <span className='hide'><Switch checked={info.gender.show} onChange={(checked) => switchChange(checked, "gender")} size="small" style={{ marginRight: "10px" }} />Hide</span>
         </Row>
-        {questionList?.map((val) => (
+        {info.personalQuestions.map((val: any) => (
           <EditRow>
             <p className='first-row'>{val.type}</p>
             <div className='second-row'>
@@ -149,7 +155,7 @@ const Personal: React.FC<any> = ({ setState, info,handleRegister }) => {
             </div>
           </EditRow>
         ))}
-        {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} />}
+        {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} choices={singleQuestion.choices} />}
         <AddCon onClick={() => setShowQuestion(true)}>
           <img src={add} alt="img" />
           <p className='add-text'>Add a question</p>

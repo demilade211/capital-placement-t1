@@ -4,7 +4,7 @@ export const qTypes = [
         value: '1',
     },
     {
-        label: "Short answer",
+        label: "Short Answer",
         value: '2',
     },
     {
@@ -16,7 +16,7 @@ export const qTypes = [
         value: '4',
     },
     {
-        label: "Multiple choice",
+        label: "Multiple Choice",
         value: '5',
     },
     {
@@ -32,7 +32,7 @@ export const qTypes = [
         value: '8',
     },
     {
-        label: "Video question",
+        label: "Video Question",
         value: '9',
     },
   ]

@@ -26,7 +26,7 @@ const CreateQuestion: React.FC<any> = ({ type, setShowQuestion, setQuestionType,
 
   const onSelectChange = (option: any) => {
     setQuestionType(Number(option.value))
-    setSingleQuestion((prev: any) => ({ ...prev, type: option.label }))
+    setSingleQuestion((prev: any) => ({ ...prev, type: option.label.replace(/\s/g, '') }))
 
   };
   const handleChange = (e: any) => {
@@ -50,12 +50,15 @@ const CreateQuestion: React.FC<any> = ({ type, setShowQuestion, setQuestionType,
     );
     setSingleQuestion((prev: any) => ({...prev, choices:updatedChoices}));
 
+    if(id === 0){
+      setOption(updatedChoice)
+    }
   };
 
   const addChoice = () => {
     if (option) {
-      setSingleQuestion((prev: any) => ({...prev, choices:[...prev.choices,option]}))
-      setOption("")
+      setSingleQuestion((prev: any) => ({...prev, choices:[...prev.choices,""]}))
+      //setOption("")
     }
 
   };
@@ -82,17 +85,17 @@ const CreateQuestion: React.FC<any> = ({ type, setShowQuestion, setQuestionType,
           <ul className='choice-con'>
             <label className='label'></label>
             {choices.map((val:string,index:number) => <li key={index}>
-              <ChoiceInput place="Type here" type="text" value={val} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateChoice(index, e.target.value)}/>
+              <ChoiceInput place="Type here" type="text"  adder={choices.length-1===index} value={val} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateChoice(index, e.target.value)} addChoices={addChoice}/>
             </li>
             )}
-            <li>
+            {/* <li>
               <ChoiceInput place="Type here" value={option} type="text" adder={true} onChange={optionChange} addChoices={addChoice} />
-            </li>
+            </li> */}
           </ul>
           <Checkbox name='other' style={{ marginBottom: "40px" }} onChange={onChange}><span className='other'>Enable “Other” option </span></Checkbox>
         </>
       }
-      {type === 5 && <Input place="Enter number of choice allowed here" label="Max choice allowed" type="number" name="maxChoiceAllowed" />}
+      {type === 5 && <Input place="Enter number of choice allowed here" label="Max choice allowed" type="number" name="maxChoice" />}
       <div className='cancel-save'>
         <span onClick={() => {
           setShowQuestion(false)
