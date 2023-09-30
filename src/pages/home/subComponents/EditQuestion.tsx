@@ -144,7 +144,7 @@ const EditQuestion: React.FC<any> = ({ section, currentIndex, data, setQuestionT
         <>
           <Input place="Additional Information" type="text" name="additionalInformation" />
           <div className='grid-con'>
-            <Input place="Max duration of video" type="number" name="maxDuration" />
+            <Input place="Max duration of video" type="number" name="maxDuration" onChange={handleChange}/>
             <SelectInput place="in (sec/min)" options={tTypes} setQuestionType={setQuestionType} onChange={onTimeChange} />
           </div>
         </>
@@ -162,7 +162,7 @@ const EditQuestion: React.FC<any> = ({ section, currentIndex, data, setQuestionT
           <Checkbox name='other' checked={singleEdit.other} style={{ marginBottom: "40px" }} onChange={onChange}><span className='other'>Enable “Other” option </span></Checkbox>
         </>
       }
-      {data.type === "MultipleChoice" && <Input place="Enter number of choice allowed here" value={singleEdit.maxChoice} label="Max choice allowed" type="number" name="maxChoice" />}
+      {data.type === "MultipleChoice" && <Input place="Enter number of choice allowed here" value={singleEdit.maxChoice} label="Max choice allowed" type="number" name="maxChoice" onChange={handleChange}/>}
       <div className='cancel-save'>
         <span onClick={deleteQuestion}>
           <img src={cancel} alt="img" />Delete question

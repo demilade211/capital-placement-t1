@@ -65,6 +65,7 @@ const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
           in: '',
         }
       )
+      setQuestionType(null)
     }
   };
 
@@ -191,7 +192,9 @@ const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
 const PersonalCon = styled.div`  
   width: 100%;  
   padding: 30px; 
-  overflow-x:scroll;
+  @media (max-width: 600px) {  
+    overflow-x:scroll; 
+  } 
 `;
 
 const Row = styled.div`  
@@ -244,6 +247,7 @@ const AddCon = styled.div`
   display: flex;
   align-items: center;
   margin-top:50px;
+  cursor: pointer;
   img{
     width: 20px;
     height: 20px;

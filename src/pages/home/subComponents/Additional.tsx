@@ -113,7 +113,9 @@ const Additional: React.FC<any> = ({ setState, info, handleRegister }) => {
 const AdditionalCon = styled.div`  
   width: 100%;  
   padding: 30px; 
-  overflow-x:scroll;
+  @media (max-width: 600px) {  
+    overflow-x:scroll; 
+  } 
 `;
 
 const AddCon = styled.div`  
