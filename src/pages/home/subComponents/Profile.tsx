@@ -160,6 +160,7 @@ const Profile: React.FC<any> = ({ setState, info, handleRegister }) => {
 const ProCon = styled.div`  
   width: 100%;  
   padding: 30px; 
+  overflow-x:scroll;
 `;
 
 const Row = styled.div`  

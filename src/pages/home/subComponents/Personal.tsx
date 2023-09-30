@@ -191,6 +191,7 @@ const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
 const PersonalCon = styled.div`  
   width: 100%;  
   padding: 30px; 
+  overflow-x:scroll;
 `;
 
 const Row = styled.div`  

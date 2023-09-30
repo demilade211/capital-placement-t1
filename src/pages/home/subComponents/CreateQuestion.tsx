@@ -95,7 +95,7 @@ const CreateQuestion: React.FC<any> = ({ type, setShowQuestion, setQuestionType,
           <Checkbox name='other' style={{ marginBottom: "40px" }} onChange={onChange}><span className='other'>Enable “Other” option </span></Checkbox>
         </>
       }
-      {type === 5 && <Input place="Enter number of choice allowed here" label="Max choice allowed" type="number" name="maxChoice" />}
+      {type === 5 && <Input place="Enter number of choice allowed here" label="Max choice allowed" type="number" name="maxChoice" onChange={handleChange}/>}
       <div className='cancel-save'>
         <span onClick={() => {
           setShowQuestion(false)

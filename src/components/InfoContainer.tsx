@@ -18,7 +18,10 @@ const Con = styled.div`
     border-radius: 20px;
     background: #FFF;
     box-shadow: 3px 3px 14px 0px rgba(190, 190, 190, 0.30);
-    margin-bottom:50px;
+    margin-bottom:50px; 
+    @media (max-width: 600px) {  
+        width: 100%; 
+    }
     .head{
         width: 100%;
         height: 65px;
