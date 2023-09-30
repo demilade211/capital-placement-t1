@@ -7,6 +7,8 @@ import add from "../images/add.svg"
 import InfoContainer from '../../../components/InfoContainer'
 import CreateQuestion from './CreateQuestion';
 import edit from "../images/edit.svg"
+import EditQuestion from './EditQuestion';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Question {
   type: string;
@@ -24,6 +26,7 @@ const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
 
   const [showQuestion, setShowQuestion] = useState(false);
   const [questionType, setQuestionType] = useState(null);
+  const [editIndex, setEditIndex] = useState<number[]>([]);
   const [singleQuestion, setSingleQuestion] = useState<Question>({
     type: "",
     question: '',
@@ -44,7 +47,7 @@ const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
         ...prev,
         personalInformation: {
           ...prev.personalInformation,
-          personalQuestions: [...prev.personalInformation.personalQuestions, singleQuestion]
+          personalQuestions: [...prev.personalInformation.personalQuestions, { id: uuidv4(), ...singleQuestion }]
         }
       }))
       setShowQuestion(false)
@@ -94,6 +97,10 @@ const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
         }
       }
     }))
+  };
+
+  const handleEditClick = (index: number) => {
+    editIndex.includes(index) ? setEditIndex(editIndex.filter(val => val !== index)) : setEditIndex(prev => ([...prev, index]))
   };
   console.log(singleQuestion);
 
@@ -146,14 +153,30 @@ const Personal: React.FC<any> = ({ setState, info, handleRegister }) => {
           <Checkbox name='gender' value={info.gender.internalUse} onChange={onChange}><span className='internal'>Internal</span></Checkbox>
           <span className='hide'><Switch checked={info.gender.show} onChange={(checked) => switchChange(checked, "gender")} size="small" style={{ marginRight: "10px" }} />Hide</span>
         </Row>
-        {info.personalQuestions.map((val: any) => (
-          <EditRow>
-            <p className='first-row'>{val.type}</p>
-            <div className='second-row'>
-              <h2 className='label'>{val.question}</h2>
-              <img src={edit} alt="img" />
-            </div>
-          </EditRow>
+        {info.personalQuestions.map((val: any, index: number) => (
+          <>
+            <EditRow>
+              <p className='first-row'>{val.type}</p>
+              <div className='second-row'>
+                <h2 className='label'>{val.question}</h2>
+                <img src={edit} alt="img" onClick={() => handleEditClick(index)} />
+              </div>
+            </EditRow>
+            {editIndex.includes(index) &&
+              <EditQuestion
+                section="personal"
+                currentIndex={index}
+                data={val}
+                setQuestionType={setQuestionType}
+                addQuestion={addQuestion}
+                choices={singleQuestion.choices}
+                setState={setState}
+                setEditIndex={setEditIndex}
+                editIndex={editIndex}
+                handleRegister={handleRegister}
+              />
+            }
+          </>
         ))}
         {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} choices={singleQuestion.choices} />}
         <AddCon onClick={() => setShowQuestion(true)}>

@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import add from "../images/add.svg"
 import edit from "../images/edit.svg"
 import CreateQuestion from './CreateQuestion';
+import EditQuestion from './EditQuestion';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Question {
   type: string;
@@ -24,6 +26,7 @@ const Profile: React.FC<any> = ({ setState, info, handleRegister }) => {
 
   const [showQuestion, setShowQuestion] = useState(false);
   const [questionType, setQuestionType] = useState(null);
+  const [editIndex, setEditIndex] = useState<number[]>([]);
   const [singleQuestion, setSingleQuestion] = useState<Question>({
     type: "",
     question: '',
@@ -44,7 +47,7 @@ const Profile: React.FC<any> = ({ setState, info, handleRegister }) => {
         ...prev,
         profile: {
           ...prev.profile,
-          profileQuestions: [...prev.profile.profileQuestions, singleQuestion]
+          profileQuestions: [...prev.profile.profileQuestions, { id: uuidv4(), ...singleQuestion }]
         }
       }))
       setShowQuestion(false)
@@ -62,6 +65,7 @@ const Profile: React.FC<any> = ({ setState, info, handleRegister }) => {
           in: '',
         }
       )
+      setQuestionType(null)
     }
   };
 
@@ -95,8 +99,10 @@ const Profile: React.FC<any> = ({ setState, info, handleRegister }) => {
       }
     }))
   };
- 
-  
+
+  const handleEditClick = (index: number) => {
+    editIndex.includes(index) ? setEditIndex(editIndex.filter(val => val !== index)) : setEditIndex(prev => ([...prev, index]))
+  };
 
   return (
     <InfoContainer title="Profile">
@@ -116,14 +122,30 @@ const Profile: React.FC<any> = ({ setState, info, handleRegister }) => {
           <Checkbox name='resume' value={info.resume.mandatory} onChange={onChange}><span className='internal'>Mandatory</span></Checkbox>
           <span className='hide'><Switch checked={info.resume.show} onChange={(checked) => switchChange(checked, "resume")} size="small" style={{ marginRight: "10px" }} />Hide</span>
         </Row>
-        {info.profileQuestions.map((val: any) => (
-          <EditRow>
-            <p className='first-row'>{val.type}</p>
-            <div className='second-row'>
-              <h2 className='label'>{val.question}</h2>
-              <img src={edit} alt="img" />
-            </div>
-          </EditRow>
+        {info.profileQuestions.map((val: any, index: number) => (
+          <>
+            <EditRow>
+              <p className='first-row'>{val.type}</p>
+              <div className='second-row'>
+                <h2 className='label'>{val.question}</h2>
+                <img src={edit} alt="img" onClick={() => handleEditClick(index)} />
+              </div>
+            </EditRow>
+            {editIndex.includes(index) &&
+              <EditQuestion
+                section="profile"
+                currentIndex={index}
+                data={val}
+                setQuestionType={setQuestionType}
+                addQuestion={addQuestion}
+                choices={singleQuestion.choices}
+                setState={setState}
+                setEditIndex={setEditIndex}
+                editIndex={editIndex}
+                handleRegister={handleRegister}
+              />
+            }
+          </>
         ))}
         {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} choices={singleQuestion.choices} />}
         <AddCon onClick={() => setShowQuestion(true)}>

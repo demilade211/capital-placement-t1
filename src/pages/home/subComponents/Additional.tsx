@@ -11,6 +11,7 @@ import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import CreateQuestion from './CreateQuestion';
 import EditQuestion from './EditQuestion';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Question {
   type: string;
@@ -44,7 +45,7 @@ const Additional: React.FC<any> = ({ setState, info, handleRegister }) => {
 
   const addQuestion = async () => {
     if (singleQuestion.type && singleQuestion.question) {
-      setState((prev: any) => ({ ...prev, customisedQuestions: [...prev.customisedQuestions, singleQuestion] }))
+      setState((prev: any) => ({ ...prev, customisedQuestions: [...prev.customisedQuestions, { id: uuidv4(), ...singleQuestion }] }))
       setShowQuestion(false)
       await handleRegister()
       setSingleQuestion(
@@ -52,7 +53,7 @@ const Additional: React.FC<any> = ({ setState, info, handleRegister }) => {
           type: "",
           question: '',
           disqualify: false,
-          choices: [],
+          choices: [""],
           other: false,
           maxChoice: 0,
           additionalInformation: '',
@@ -60,15 +61,16 @@ const Additional: React.FC<any> = ({ setState, info, handleRegister }) => {
           in: '',
         }
       )
+      setQuestionType(null)
     }
   };
 
   const handleEditClick = (index: number) => {
-    editIndex.includes(index)?setEditIndex(editIndex.filter(val=>val!==index)):setEditIndex(prev => ([...prev, index]))
+    editIndex.includes(index) ? setEditIndex(editIndex.filter(val => val !== index)) : setEditIndex(prev => ([...prev, index]))
   };
-  
+
   console.log(info);
-  
+
 
   return (
     <InfoContainer title="Additional questions">
@@ -82,7 +84,20 @@ const Additional: React.FC<any> = ({ setState, info, handleRegister }) => {
                 <img src={edit} alt="img" onClick={() => handleEditClick(index)} />
               </div>
             </EditRow>
-            {editIndex.includes(index)&&<EditQuestion data={val} setQuestionType={setQuestionType} addQuestion={addQuestion} choices={singleQuestion.choices}/>}
+            {editIndex.includes(index) &&
+              <EditQuestion
+                section="additional"
+                currentIndex={index}
+                data={val}
+                setQuestionType={setQuestionType}
+                addQuestion={addQuestion}
+                choices={singleQuestion.choices}
+                setState={setState}
+                setEditIndex={setEditIndex}
+                editIndex={editIndex}
+                handleRegister={handleRegister}
+              />
+            }
           </>
         ))}
         {showQuestion && <CreateQuestion setSingleQuestion={setSingleQuestion} setQuestionType={setQuestionType} type={questionType} setShowQuestion={setShowQuestion} addQuestion={addQuestion} choices={singleQuestion.choices} />}

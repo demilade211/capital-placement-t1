@@ -4,6 +4,7 @@ export interface FirstName {
   }
 
   interface Question {
+    id:string;
     type: string;
     question: string;
     disqualify?: boolean;
